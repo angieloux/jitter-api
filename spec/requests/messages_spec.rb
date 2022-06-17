@@ -12,25 +12,57 @@ require 'rails_helper'
 # of tools you can use to make these specs even more expressive, but we're
 # sticking to rails and rspec-rails APIs to keep things simple and stable.
 
-RSpec.describe "/messages", type: :request do
+RSpec.describe '/messages', type: :request do
+  before(:each) do
+    FactoryBot.create(:message, text: "Message test 1")
+    FactoryBot.create(:message, text: "Message test 2")
+  end
+  
+  describe 'get all messages at /messages' do
+    it 'returns all messages' do
+      get '/messages'
+      expect(response).to have_http_status(:success)
+      print JSON.parse(response.body)
+      expect(JSON.parse(response.body).size).to eq(2)
+    end
+  end
+
+  describe 'get a message at /messages/:id' do
+    it 'returns a messages' do
+      get '/messages/3' 
+      expect(response).to have_http_status(:success)
+      expect(response.body).to include("Message test 1")
+    end
+
+    it 'returns not found based on the wrong param' do
+      get '/messages/35' 
+      expect(response).to have_http_status(:not_found) # this will crash the app as it throws an error
+      expect(response.body).to include("wrong ID")
+
+
+    end
+  end
+
+
+
   # This should return the minimal set of attributes required to create a valid
   # Message. As you add validations to Message, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
-  }
+  # let(:valid_attributes) {
+  #   skip("Add a hash of attributes valid for your model")
+  # }
 
-  let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
-  }
+  # let(:invalid_attributes) {
+  #   skip("Add a hash of attributes invalid for your model")
+  # }
 
-  # This should return the minimal set of values that should be in the headers
-  # in order to pass any filters (e.g. authentication) defined in
-  # MessagesController, or in your router and rack
-  # middleware. Be sure to keep this updated too.
-  let(:valid_headers) {
-    {}
-  }
+  # # This should return the minimal set of values that should be in the headers
+  # # in order to pass any filters (e.g. authentication) defined in
+  # # MessagesController, or in your router and rack
+  # # middleware. Be sure to keep this updated too.
+  # let(:valid_headers) {
+  #   {}
+  # }
 
   # describe "GET /index" do
   #   it "renders a successful response" do
