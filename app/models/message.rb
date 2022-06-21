@@ -5,7 +5,7 @@ class Message < ApplicationRecord
   def transform_message
     return {
       id: self.id,
-      message: self.text,
+      text: self.text,
       posted: self.updated_at,
       username: self.user.username
     }  
